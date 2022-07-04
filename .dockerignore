@@ -1,0 +1,7 @@
+.git
+.idea
+.env
+.env.example
+.gitignore
+yarn.lock
+node_modules/

@@ -1,0 +1,46 @@
+version: '3'
+services:
+    node:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        command: npm start
+        container_name: backend_api
+        image: backend_api
+        restart: always
+        links:
+            - mariadb
+            - redis
+        ports:
+            - ${SERVER_PORT}:${SERVER_PORT}
+        env_file:
+            - .env
+        environment:
+            SERVER_PORT: ${SERVER_PORT}
+            SERVER_DOMAIN: ${SERVER_DOMAIN}
+            DB_HOST: ${DB_HOST}
+            DB_USER: ${DB_USER}
+            DB_PASSWORD: ${DB_PASSWORD}
+            DB_NAME: ${DB_NAME}
+            DB_PORT: ${DB_PORT}
+            SALT_KEY: ${SALT_KEY}
+        network_mode: bridge
+    mariadb:
+        image: mariadb:latest
+        container_name: backend_database
+        restart: unless-stopped
+        ports:
+            - ${DB_PORT}:3306
+        env_file:
+            - .env
+        environment:
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+            MYSQL_DATABASE: ${DB_NAME}
+            MYSQL_USER: ${DB_USER}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+        volumes:
+            - ./mariadb:/var/lib/mysql
+        network_mode: bridge
+#Volumes
+volumes:
+    dbdata:
